@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil & Kuis Sains Wixx</title>
+    <style>
+        body {
+            background-color: #0b0d17;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #4cc9f0;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        h2 { color: #4cc9f0; margin: 10px 0; }
+        .quiz-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-kuis {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: transparent;
+            color: white;
+            border: 2px solid #4cc9f0;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        /* Efek hanya muncul saat jari menempel di layar */
+.btn-kuis:active {
+    background-color: #4cc9f0 !important;
+    color: #0b0d17 !important;
+}
+
+/* Menghilangkan sisa warna biru setelah jari diangkat */
+.btn-kuis:focus {
+    background: transparent !important;
+    color: white !important;
+    outline: none;
+}
+
+            background: #4cc9f0;
+            color: #0b0d17;
+        }
+        #hasil { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <img src="profile.jpg" alt="Foto Profil" class="profile-img">
+    <h2>Wixx Official</h2>
+    <p style="font-size: 14px; opacity: 0.8;">Web Developer & Science Enthusiast</p>
+
+    <div class="quiz-section" id="quiz-box">
+        <div id="welcome-screen">
+            <h3>Siap Uji Nyali?</h3>
+            <p>Klik tombol di bawah untuk mulai kuis 10 soal antariksa & bumi!</p>
+            <button class="btn-kuis" onclick="mulaiKuis()" style="background: #4cc9f0; color: #0b0d17;">🚀 SEMANGAT!</button>
+        </div>
+
+        <div id="quiz-content" style="display: none;">
+            <div id="no-soal" style="font-size: 12px; color: #aaa;"></div>
+            <h3 style="color: #4cc9f0;">🚀 Kuis Sains</h3>
+            <p id="pertanyaan"></p>
+            <div id="opsi-container">
+                <button class="btn-kuis" onclick="pilihJawaban(0)"></button>
+                <button class="btn-kuis" onclick="pilihJawaban(1)"></button>
+                <button class="btn-kuis" onclick="pilihJawaban(2)"></button>
+            </div>
+            <p id="hasil"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dataKuis = [
+        { tanya: "Lapisan bumi paling luar?", opsi: ["Inti", "Mantel", "Kerak"], benar: 2 },
+        { tanya: "Pembatas planet dalam & luar?", opsi: ["Sabuk Asteroid", "Cincin", "Atmosfer"], benar: 0 },
+        { tanya: "Benda langit jatuh ke bumi?", opsi: ["Meteor", "Meteorit", "Asteroid"], benar: 1 },
+        { tanya: "Penyebab Tsunami?", opsi: ["Angin", "Gempa Laut", "Gerhana"], benar: 1 },
+        { tanya: "Mahkota Matahari?", opsi: ["Inti", "Fotosfer", "Korona"], benar: 2 },
+        { tanya: "Sunset terjadi karena?", opsi: ["Revolusi", "Rotasi", "Bumi Berhenti"], benar: 1 },
+        { tanya: "Inti bumi luar bersifat?", opsi: ["Cair", "Padat", "Gas"], benar: 0 },
+        { tanya: "Asteroid vs Meteor?", opsi: ["Warna", "Ukuran & Lintasan", "Suhu"], benar: 1 },
+        { tanya: "Gempa lempeng?", opsi: ["Vulkanik", "Runtuhan", "Tektonik"], benar: 2 },
+        { tanya: "Planet Merah?", opsi: ["Mars", "Venus", "Merkurius"], benar: 0 }
+    ];
+
+    let soalSekarang = 0;
+    let skor = 0;
+
+    function mulaiKuis() {
+        document.getElementById("welcome-screen").style.display = "none";
+        document.getElementById("quiz-content").style.display = "block";
+        tampilkanSoal();
+    }
+
+    function tampilkanSoal() {
+        const soal = dataKuis[soalSekarang];
+        document.getElementById("no-soal").innerText = `Pertanyaan ${soalSekarang + 1} dari 10`;
+        document.getElementById("pertanyaan").innerText = soal.tanya;
+        document.getElementById("hasil").innerText = "";
+        const tombols = document.querySelectorAll("#opsi-container .btn-kuis");
+        tombols.forEach((btn, i) => { 
+            btn.innerText = soal.opsi[i]; 
+            btn.disabled = false;
+            btn.blur(); // Reset efek biru
+        });
+    }
+
+    function pilihJawaban(idx) {
+        const soal = dataKuis[soalSekarang];
+        const h = document.getElementById("hasil");
+        if(idx === soal.benar) { 
+            skor++; 
+            h.innerText = "⭐ BENAR!"; 
+            h.style.color = "#4ade80"; 
+        } else { 
+            h.innerText = "❌ SALAH!"; 
+            h.style.color = "#f87171"; 
+        }
+        
+        document.querySelectorAll("#opsi-container .btn-kuis").forEach(b => b.disabled = true);
+        
+        setTimeout(() => {
+            soalSekarang++;
+            if(soalSekarang < dataKuis.length) tampilkanSoal();
+            else tampilkanSkor();
+        }, 1200);
+    }
+
+    function tampilkanSkor() {
+        document.getElementById("quiz-box").innerHTML = `
+            <h3>🏆 Selesai!</h3>
+            <p style="font-size: 20px;">Skor: ${skor*10}/100</p>
+            <p>${skor >= 7 ? "Jenius!" : "Belajar lagi yuk!"}</p>
+            <button class="btn-kuis" onclick="location.reload()">Ulangi Kuis</button>
+        `;
+    }
+</script>
+
+</body>
+</html>
